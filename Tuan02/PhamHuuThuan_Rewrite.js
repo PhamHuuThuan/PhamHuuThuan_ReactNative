@@ -52,3 +52,28 @@ function checkAdult(age){
     return age > 18;
 }
 console.log(ages.some(checkAdult));
+
+//Every
+const ages3 = [32, 33, 16, 40];
+
+function checkAge(age){
+    return age > 18;
+}
+console.log(ages.every(checkAge));
+
+const survey = [
+    { name: "Steve", answer: "Yes"},
+    { name: "Jessica", answer: "Yes"},
+    { name: "Peter", answer: "Yes"},
+    { name: "Elaine", answer: "No"}
+  ];
+
+function isSameAnswer(el, index, arr){
+    if(index == 0){
+        return true;
+    }else{
+        return (el.answer === arr[index-1].answer);
+    }
+}
+let result1 = survey.every(isSameAnswer);
+console.log(result1);
