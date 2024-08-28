@@ -24,3 +24,12 @@ function checkAdult(age){
 const result = ages.filter(checkAdult);
 console.log(result);
 
+//Find
+ages1 = [3, 10, 19, 20];
+
+function checkAge(age){
+    return age > 18;
+}
+console.log(ages1.find(checkAge))
+
+
