@@ -44,3 +44,11 @@ function getSum(total, num){
     return total + Math.round(num);
 }
 console.log(numbers3.reduce(getSum));
+
+//Some
+const ages2 = [3, 10, 18, 20];
+
+function checkAdult(age){
+    return age > 18;
+}
+console.log(ages.some(checkAdult));
