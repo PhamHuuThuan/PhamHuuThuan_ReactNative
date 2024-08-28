@@ -77,3 +77,9 @@ function isSameAnswer(el, index, arr){
 }
 let result1 = survey.every(isSameAnswer);
 console.log(result1);
+
+//Flat map
+const myArr = [1, 2, 3, 4, 5, 6];
+const newArr1 = myArr.flatMap(x => [x, x*10]);
+console.log('Flat Map: ' + newArr1);
+
