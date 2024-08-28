@@ -13,3 +13,14 @@ function getFullName(item){
     return [item.firstname, item.lastname].join(" ");
 }
 console.log(persons.map(getFullName));
+
+//Filter
+const ages = [32, 33, 16, 40];
+
+function checkAdult(age){
+    return age >= 18;
+}
+
+const result = ages.filter(checkAdult);
+console.log(result);
+
