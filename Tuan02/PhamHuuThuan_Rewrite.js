@@ -32,4 +32,15 @@ function checkAge(age){
 }
 console.log(ages1.find(checkAge))
 
+//Reduce
+const numbers2 = [175, 50, 25];
+function myFunc(total, num){
+    return total - num;
+}
+console.log(numbers2.reduce(myFunc))
 
+const numbers3 = [15.5, 2.3, 1.1, 4.7];
+function getSum(total, num){
+    return total + Math.round(num);
+}
+console.log(numbers3.reduce(getSum));
