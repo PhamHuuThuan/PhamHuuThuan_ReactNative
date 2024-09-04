@@ -94,7 +94,26 @@ function maximunNumber(nums){
 }
 console.log(maximunNumber([1,2,3,4,5,6,7,8,9,10]))
 
-//14. Create a function that will return a Boolean specifying if a number is prime
+//14. Print the first 10 Fibonacci numbers without recursion 
+var a = 0, b = 1, c;
+console.log(a);
+console.log(b);
+for(var i = 3; i <= 10; i++){
+    c = a + b;
+    console.log(c);
+    a = b;
+    b = c;
+}
+
+//15. Create a function that will find the nth Fibonacci number using recursion
+function fibonacci(n){
+    if(n<=1)
+        return n;
+    return fibonacci(n-1) + fibonacci(n-2);
+}
+console.log("the 10th Fibonacci number is " + fibonacci(10));
+
+//16. Create a function that will return a Boolean specifying if a number is prime
 function isPrime(n){
     if(n < 2){
         return false;
@@ -107,7 +126,7 @@ function isPrime(n){
 }
 console.log(isPrime(7))
 
-//15. Calculate the sum of digits of a positive integer number
+//17. Calculate the sum of digits of a positive integer number
 function sumOfDigits(n){
     var sum = 0;
     while(n > 10){
@@ -118,3 +137,93 @@ function sumOfDigits(n){
     return sum;
 }
 console.log(sumOfDigits(12345))
+
+//18. Print the first 100 prime numbers
+var count = 0;
+var n = 2;
+while(count < 100){
+    if(isPrime(n)){
+        console.log(n);
+        count++;
+    }
+    n++;
+}
+
+//19. Create a function that will return in an array the first “p” prime numbers greater than “n” 
+function firstPrimeNumbersGreaterThanN(p, n){
+    var primeNumbers = [];
+    var count = 0;
+    while(count < p){
+        if(isPrime(n)){
+            primeNumbers.push(n);
+            count++;
+        }
+        n++;
+    }
+    return primeNumbers;
+}
+console.log("the first 5 prime numbers greater than 10 are " + firstPrimeNumbersGreaterThanN(5, 10))
+
+//20. Rotate an array to the left 1 position
+function rotateLeft(nums){
+    var temp = nums[0];
+    for(var i = 1; i < nums.length; i++){
+        nums[i-1] = nums[i];
+    }
+    nums[nums.length-1] = temp;
+    return nums;
+}
+console.log(rotateLeft([1,2,3,4,5]))
+
+//21. Rotate an array to the right 1 position
+function rotateRight(nums){
+    var temp = nums[nums.length-1];
+    for(var i = nums.length-1; i >= 0; i--){
+        nums[i] = nums[i-1];
+    }
+    nums[0] = temp;
+    return nums;
+}
+console.log(rotateRight([1,2,3,4,5]))
+
+//22. Reverse an array
+function reverseArray(nums){
+    var reverseArray = [];
+    for(var i = nums.length-1; i >= 0; i--){
+        reverseArray.push(nums[i]);
+    }
+    return reverseArray;
+}
+console.log(reverseArray([1,2,3,4,5]))
+
+//23. Reverse a string
+function reverseString(str){
+    var reverseString = "";
+    for(var i = str.length-1; i >= 0; i--){
+        reverseString += str[i]
+    }
+    return reverseString;
+}
+console.log(reverseString("hello") + " " + reverseString("world") + "!")
+
+//24. Create a function that will merge two arrays and return the result as a new array
+function mergeArrays(nums1, nums2){
+    var mergeArray = nums1.concat(nums2);
+    return mergeArray;
+}
+console.log(mergeArrays([1,2,3],[4,5,6]))
+
+//25. Create a function that will receive two arrays of numbers as arguments and return an array composed of all the numbers that are either in the first array or second array but not in both 
+function mergeArrays(nums1, nums2){
+    var mergeArray = nums1.concat(nums2);
+    var uniqueArray = mergeArray.filter((item, index) => mergeArray.indexOf(item) === index);
+    return uniqueArray;
+}
+console.log("the numbers that are either in the first array or second array but not in both are " + mergeArrays([1,2,3],[2,3,4]))
+
+//26. Create a function that will receive two arrays and will return an array with elements that are in the first array but not in the second
+function uniqueElements(nums1, nums2){
+    var uniqueElements = nums1.filter(item => !nums2.includes(item));
+    return uniqueElements;
+}
+console.log("the elements that are in the first array but not in the second are " + uniqueElements([1,2,3],[2,3,4]))
