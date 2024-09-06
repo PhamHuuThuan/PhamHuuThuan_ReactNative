@@ -48,3 +48,28 @@ function distanceBetweenFirst100PrimeNumbers(){
     return result;
 }
 console.log("The distance between the first 100 prime numbers: " + distanceBetweenFirst100PrimeNumbers());
+
+//30. Create a function that will add two positive numbers of indefinite size. The numbers are received as strings and the result should be also provided as string.
+function addTwoPositiveNumbers(num1, num2){
+    var result = "";
+    var carry = 0;
+    var i = num1.length - 1;
+    var j = num2.length - 2;
+    while(i >= 0 || j>= 0){
+        var sum = carry;
+        if(i >= 0){
+            sum += parseInt(num1[i]);
+            i--;
+        }
+        if(j >= 0){
+            sum += parseInt(num2[j]);
+            j--;
+        }
+        carry = Math.floor(sum/10);
+        result = (sum % 10) + result;
+    }
+    if(carry > 0)
+        result = carry + result;
+    return result;
+}
+console.log("Add two positive numbers: ", addTwoPositiveNumbers("123456789", "987654321"));
