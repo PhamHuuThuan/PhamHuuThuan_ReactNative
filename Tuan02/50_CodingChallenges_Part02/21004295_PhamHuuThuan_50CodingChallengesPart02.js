@@ -106,3 +106,9 @@ function CSVToArray(str){
         .map(row => row.split(","));
 }
 console.log("Convert a CSV text to a bi-dimensional array: ", CSVToArray("a,b,c\nd,e,f\ng,h,i"));
+
+//36. Create a function that converts a string to an array of characters
+function stringToArray(str){
+    return str.split("");
+}
+console.log("Convert a string to an array of characters: ", stringToArray("Pham Huu Thuan"));
