@@ -30,3 +30,21 @@ function sumOfFirst100PrimeNumbers(){
     return [sum, result];
 }
 console.log("Sum of first 100 prime numbers: " + sumOfFirst100PrimeNumbers() + "--- List of first 100 prime numbers: " + sumOfFirst100PrimeNumbers()[1]);
+
+//29. Print the distance between the first 100 prime numbers
+function distanceBetweenFirst100PrimeNumbers(){
+    var result = [];
+    var count = 0;
+    var i = 2;
+    var prev = i;
+    while(count < 100){
+        if(isPrime(i)){
+            result.push(i - prev);
+            prev = i;
+            count++;
+        }
+        i++;
+    }
+    return result;
+}
+console.log("The distance between the first 100 prime numbers: " + distanceBetweenFirst100PrimeNumbers());
