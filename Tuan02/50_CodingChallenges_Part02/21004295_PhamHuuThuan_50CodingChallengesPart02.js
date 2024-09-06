@@ -73,3 +73,9 @@ function addTwoPositiveNumbers(num1, num2){
     return result;
 }
 console.log("Add two positive numbers: ", addTwoPositiveNumbers("123456789", "987654321"));
+
+//31. Create a function that will return the number of words in a text
+function countWords(text){
+    return text.split(" ").length;
+}
+console.log("Number of words in a text: ", countWords("My name is Pham Huu Thuan"));
