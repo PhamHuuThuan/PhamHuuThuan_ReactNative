@@ -87,3 +87,9 @@ function capitalizeFirstLetter(text){
         .join(" ");
 }
 console.log("Capitalize the first letter of each word in a text: ", capitalizeFirstLetter("my name is pham huu thuan"));
+
+//33. Calculate the sum of numbers received in a comma delimited string
+function sumOfNumbersInString(str){
+    return str.split(",").reduce((sum, num) => sum + parseFloat(num), 0);
+}
+console.log("Sum of numbers in a comma delimited string: ", sumOfNumbersInString("1,2,3,4,5"));
