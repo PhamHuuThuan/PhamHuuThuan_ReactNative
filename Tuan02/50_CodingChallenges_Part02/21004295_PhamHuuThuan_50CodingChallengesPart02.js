@@ -119,3 +119,9 @@ function stringToArrayASCII(str){
         .map(char => char.charCodeAt(0));
 }
 console.log("Convert a string in an array containing the ASCII codes of each character: ", stringToArrayASCII("Pham Huu Thuan"));
+
+//38. Create a function that will convert an array containing ASCII codes in a string
+function arrayASCIIToString(arr){
+    return arr.map(num => String.fromCharCode(num)).join("");
+}
+console.log("Convert an array containing ASCII codes in a string: ", arrayASCIIToString([80, 104, 97, 109, 32, 72, 117, 117, 32, 84, 104, 117, 97, 110]));
