@@ -79,3 +79,11 @@ function countWords(text){
     return text.split(" ").length;
 }
 console.log("Number of words in a text: ", countWords("My name is Pham Huu Thuan"));
+
+//32. Create a function that will capitalize the first letter of each word in a text
+function capitalizeFirstLetter(text){
+    return text.split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+console.log("Capitalize the first letter of each word in a text: ", capitalizeFirstLetter("my name is pham huu thuan"));
