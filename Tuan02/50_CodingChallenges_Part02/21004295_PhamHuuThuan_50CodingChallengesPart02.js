@@ -140,3 +140,18 @@ function caesarCypher(str, shift){
     .join("");
 }
 console.log("Caesar cypher: ", caesarCypher("Pham Huu Thuan", 3));
+
+//40. Implement the bubble sort algorithm for an array of numbers
+function bubbleSort(arr){
+    for(var i = 0; i < arr.length - 1; i++){
+        for(var j = 0; j < arr.length - i - 1; i++){
+            if(arr[j] > arr[j+1]){
+                var temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+    return arr;
+}
+console.log("Bubble sort algorithm: ", bubbleSort([3, 2, 1, 5, 4]));
