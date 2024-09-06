@@ -125,3 +125,18 @@ function arrayASCIIToString(arr){
     return arr.map(num => String.fromCharCode(num)).join("");
 }
 console.log("Convert an array containing ASCII codes in a string: ", arrayASCIIToString([80, 104, 97, 109, 32, 72, 117, 117, 32, 84, 104, 117, 97, 110]));
+
+//39. Implement the Caesar cypher
+function caesarCypher(str, shift){
+    return str.split("")
+    .map(char =>{
+        var code = char.charCodeAt(0);
+        if(code >= 65 && code <= 90)
+            code = 65 + (code - 65 + shift) % 26;
+        if(code >= 97 && code <= 122)
+            code = 97 + (code - 97 + shift) % 26;
+        return String.fromCharCode(code);
+    })
+    .join("");
+}
+console.log("Caesar cypher: ", caesarCypher("Pham Huu Thuan", 3));
