@@ -99,3 +99,10 @@ function wordsInText(text){
    return text.split(" ");
 }
 console.log("Words inside a text: ", wordsInText("My name is Pham Huu Thuan"));
+
+//35. Create a function to convert a CSV text to a “bi-dimensional” array
+function CSVToArray(str){
+    return str.split("\n")
+        .map(row => row.split(","));
+}
+console.log("Convert a CSV text to a bi-dimensional array: ", CSVToArray("a,b,c\nd,e,f\ng,h,i"));
