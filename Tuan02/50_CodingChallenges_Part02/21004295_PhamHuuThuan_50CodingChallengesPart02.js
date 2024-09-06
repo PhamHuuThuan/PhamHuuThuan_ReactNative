@@ -112,3 +112,10 @@ function stringToArray(str){
     return str.split("");
 }
 console.log("Convert a string to an array of characters: ", stringToArray("Pham Huu Thuan"));
+
+//37. Create a function that will convert a string in an array containing the ASCII codes of each character
+function stringToArrayASCII(str){
+    return str.split("")
+        .map(char => char.charCodeAt(0));
+}
+console.log("Convert a string in an array containing the ASCII codes of each character: ", stringToArrayASCII("Pham Huu Thuan"));
