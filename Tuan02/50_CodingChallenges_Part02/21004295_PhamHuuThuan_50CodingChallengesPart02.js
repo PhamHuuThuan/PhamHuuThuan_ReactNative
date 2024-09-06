@@ -93,3 +93,9 @@ function sumOfNumbersInString(str){
     return str.split(",").reduce((sum, num) => sum + parseFloat(num), 0);
 }
 console.log("Sum of numbers in a comma delimited string: ", sumOfNumbersInString("1,2,3,4,5"));
+
+//34. Create a function that returns an array with words inside a text.
+function wordsInText(text){
+   return text.split(" ");
+}
+console.log("Words inside a text: ", wordsInText("My name is Pham Huu Thuan"));
