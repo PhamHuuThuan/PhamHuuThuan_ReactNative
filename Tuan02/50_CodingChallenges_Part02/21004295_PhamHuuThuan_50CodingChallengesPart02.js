@@ -185,3 +185,9 @@ function binaryToNumber(str){
     return parseInt(str, 2);
 }
 console.log("Convert a string containing a binary number into a number: ", binaryToNumber("1010"));
+
+//45. Create a function to calculate the sum of all the numbers in a jagged array (contains numbers or other arrays of numbers on an unlimited number of levels)
+function sumOfJaggedArray(arr){
+    return arr.flat(Infinity).reduce((sum, num) => sum + num, 0);
+}
+console.log("Sum of all the numbers in a jagged array: ", sumOfJaggedArray([1, [2, [3, 4], 5], 6]));
