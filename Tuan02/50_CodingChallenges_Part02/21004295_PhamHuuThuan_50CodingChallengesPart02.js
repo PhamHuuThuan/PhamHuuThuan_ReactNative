@@ -216,3 +216,13 @@ function shuffleStringArr(arr){
     return arr.sort(() => Math.random() - 0.5);
 }
 console.log("Shuffle an array of strings: ", shuffleStringArr(["Pham", "Huu", "Thuan"]));
+
+//50. Create a function that will receive n as argument and return an array of n random numbers from 1 to n. The numbers should be unique inside the array.
+function randomNumbers(n){
+    var result = [];
+    for(var i = 1; i <= n; i++){
+        result.push(i);
+    }
+    return shuffleStringArr(result).slice(0, n);
+}
+console.log("Array of n random numbers from 1 to n: ", randomNumbers(10));
