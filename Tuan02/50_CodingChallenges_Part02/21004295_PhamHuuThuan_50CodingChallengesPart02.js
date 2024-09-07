@@ -161,3 +161,15 @@ function distanceBetweenTwoPoints(x1, y1, x2, y2){
     return Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
 }
 console.log("Distance between two points: ", distanceBetweenTwoPoints(1, 2, 3, 4));
+
+//42. Create a function that will return a Boolean value indicating if two circles defined by center coordinates and radius are intersecting
+//create object circle
+function Circle(x, y, r){
+    this.x = x;
+    this.y = y;
+    this.r = r;
+}
+function areCirclesIntersecting(circle1, circle2){
+    return distanceBetweenTwoPoints(circle1.x, circle1.y, circle2.x, circle2.y) < circle1.r + circle2.r;
+}
+console.log("Are two circles intersecting: ", areCirclesIntersecting(new Circle(1, 2, 3), new Circle(4, 5, 6)));
