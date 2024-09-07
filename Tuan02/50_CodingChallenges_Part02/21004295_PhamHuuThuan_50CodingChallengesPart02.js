@@ -226,3 +226,17 @@ function randomNumbers(n){
     return shuffleStringArr(result).slice(0, n);
 }
 console.log("Array of n random numbers from 1 to n: ", randomNumbers(10));
+
+//51. Find the frequency of letters inside a string. Return the result as an array of arrays. Each subarray has 2 elements: letter and number of occurrences.
+function frequencyOfLetters(str){
+    var result = [];
+    var freq = {};
+    for(var char of str){
+        freq[char] = (freq[char] || 0) + 1;
+    }
+    for(var key in freq){
+        result.push([key, freq[key]]);
+    }
+    return result;
+}
+console.log("Frequency of letters inside a string: ", frequencyOfLetters("Pham Huu Thuan"));
