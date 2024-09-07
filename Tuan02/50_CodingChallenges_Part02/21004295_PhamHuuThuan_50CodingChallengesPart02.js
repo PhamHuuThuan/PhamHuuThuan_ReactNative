@@ -155,3 +155,9 @@ function bubbleSort(arr){
     return arr;
 }
 console.log("Bubble sort algorithm: ", bubbleSort([3, 2, 1, 5, 4]));
+
+//41. Create a function to calculate the distance between two points defined by their x, y coordinates
+function distanceBetweenTwoPoints(x1, y1, x2, y2){
+    return Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+}
+console.log("Distance between two points: ", distanceBetweenTwoPoints(1, 2, 3, 4));
