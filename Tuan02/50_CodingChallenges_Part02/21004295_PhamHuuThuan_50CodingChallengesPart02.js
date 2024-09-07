@@ -203,3 +203,10 @@ function deepCopyJaggedArray(arr){
     return JSON.parse(JSON.stringify(arr));
 }
 console.log("Deep copy a jagged array: ", deepCopyJaggedArray([1, [2, [3, 6], 5], 4]));
+
+//48. Create a function to return the longest word in a string
+function longestWordInString(str){
+    return str.split(" ")
+        .reduce((longest, word) => word.length > longest.length ? word : longest, "");
+}
+console.log("Longest word in a string: ", longestWordInString("My name is Pham Huu Thuan"));
