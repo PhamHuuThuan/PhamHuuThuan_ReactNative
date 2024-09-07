@@ -240,3 +240,18 @@ function frequencyOfLetters(str){
     return result;
 }
 console.log("Frequency of letters inside a string: ", frequencyOfLetters("Pham Huu Thuan"));
+
+//52. Calculate Fibonacci(500) with high precision (all digits)
+function fibonacci(n){
+    var a = 1n;
+    var b = 0n;
+    var temp;
+    while(n >= 0){
+        temp = a;
+        a = a + b;
+        b = temp;
+        n--;
+    }
+    return b;
+}
+console.log("Fibonacci(500): ", fibonacci(500).toString());
