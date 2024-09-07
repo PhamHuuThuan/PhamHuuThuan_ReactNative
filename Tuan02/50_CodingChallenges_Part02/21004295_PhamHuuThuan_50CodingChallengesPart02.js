@@ -210,3 +210,9 @@ function longestWordInString(str){
         .reduce((longest, word) => word.length > longest.length ? word : longest, "");
 }
 console.log("Longest word in a string: ", longestWordInString("My name is Pham Huu Thuan"));
+
+//49. Shuffle an array of strings
+function shuffleStringArr(arr){
+    return arr.sort(() => Math.random() - 0.5);
+}
+console.log("Shuffle an array of strings: ", shuffleStringArr(["Pham", "Huu", "Thuan"]));
