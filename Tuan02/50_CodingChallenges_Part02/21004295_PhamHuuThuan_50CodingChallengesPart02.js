@@ -173,3 +173,9 @@ function areCirclesIntersecting(circle1, circle2){
     return distanceBetweenTwoPoints(circle1.x, circle1.y, circle2.x, circle2.y) < circle1.r + circle2.r;
 }
 console.log("Are two circles intersecting: ", areCirclesIntersecting(new Circle(1, 2, 3), new Circle(4, 5, 6)));
+
+//43. Create a function that will receive a bi-dimensional array as argument and a number and will extract as a unidimensional array the column specified by the number
+function extractColumn(arr, col){
+    return arr.map(row => row[col]);
+}
+console.log("Extract a column from a bi-dimensional array: ", extractColumn([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1));
