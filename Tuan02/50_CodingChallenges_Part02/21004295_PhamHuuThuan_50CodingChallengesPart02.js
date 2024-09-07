@@ -197,3 +197,9 @@ function maxOfJaggedArray(arr){
     return Math.max(...arr.flat(Infinity));
 }
 console.log("Maximum number in a jagged array: ", maxOfJaggedArray([1, [2, [3, 6], 5], 4]));
+
+//47. Deep copy a jagged array with numbers or other arrays in a new array
+function deepCopyJaggedArray(arr){
+    return JSON.parse(JSON.stringify(arr));
+}
+console.log("Deep copy a jagged array: ", deepCopyJaggedArray([1, [2, [3, 6], 5], 4]));
