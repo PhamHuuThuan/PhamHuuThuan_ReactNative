@@ -255,3 +255,13 @@ function fibonacci(n){
     return b;
 }
 console.log("Fibonacci(500): ", fibonacci(500).toString());
+
+//53. Calculate 70! with high precision (all digits)
+function factorial(n){
+    var result = 1n;
+    for(var i = 1; i <= n; i++){
+        result *= BigInt(i);
+    }
+    return result;
+}
+console.log("70!: ", factorial(70).toString());
