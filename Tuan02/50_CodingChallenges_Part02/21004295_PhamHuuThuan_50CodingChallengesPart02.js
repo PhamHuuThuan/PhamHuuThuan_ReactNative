@@ -179,3 +179,9 @@ function extractColumn(arr, col){
     return arr.map(row => row[col]);
 }
 console.log("Extract a column from a bi-dimensional array: ", extractColumn([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1));
+
+//44. Create a function that will convert a string containing a binary number into a number
+function binaryToNumber(str){
+    return parseInt(str, 2);
+}
+console.log("Convert a string containing a binary number into a number: ", binaryToNumber("1010"));
