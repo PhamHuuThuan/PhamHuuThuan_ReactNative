@@ -191,3 +191,9 @@ function sumOfJaggedArray(arr){
     return arr.flat(Infinity).reduce((sum, num) => sum + num, 0);
 }
 console.log("Sum of all the numbers in a jagged array: ", sumOfJaggedArray([1, [2, [3, 4], 5], 6]));
+
+//46. Find the maximum number in a jagged array of numbers or array of numbers
+function maxOfJaggedArray(arr){
+    return Math.max(...arr.flat(Infinity));
+}
+console.log("Maximum number in a jagged array: ", maxOfJaggedArray([1, [2, [3, 6], 5], 4]));
