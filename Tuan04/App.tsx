@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, Pressable} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function DetailProductScreen() {
-  console.log("Rendering DetailProductScreen");
+  const navigation = useNavigation();
+  const [selectedColor, setSelectedColor] = useState('#234896'); // Màu mặc định
+  const images = {
+    '#C5F1FB': 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/aee6d16882f7e9e9e4154103c6678314',
+    '#F30D0D': 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/00d431560e7cf43d4f0810a3d194786c',
+    '#000000': 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/e1d44ffa1b1d1fb2f5008c63d6144f89',
+    '#234896': 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/b93ad14ed7da498788208432e391d4f0',
+  };
   return (
     <View style={styles.background}>
       <View>
-        <Image source={{uri: 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/b93ad14ed7da498788208432e391d4f0'}} style={{width: 275, height: 340, margin: 10}} />
+        <Image source={{uri: images[selectedColor]}} style={{width: 275, height: 340, margin: 10}} />
       </View>
       <View>
         <Text style={styles.textNormal}>Điện Thoại Vsmart Joy 3 - Hàng chính hãng</Text>
@@ -34,12 +41,12 @@ function DetailProductScreen() {
         <Image source={{uri: 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/5929d92db3ead73ff59f0c1cdf683c4e'}} style={{width: 16, height: 16, margin: 10}}></Image>
       </View>
       <View>
-        <Pressable style={styles.selectColorBtn}>
+        <Pressable style={styles.selectColorBtn} onPress={() => navigation.navigate('SelectColor', {selectedColor, setSelectedColor})}>
           <Text style={styles.textNormal}>4 MÀU-CHỌN MÀU       ></Text>
         </Pressable>
       </View>
       <View>
-        <Pressable style={styles.buyBtn}>
+        <Pressable style={styles.buyBtn} onPress={() => navigation.navigate('SelectColor', {selectedColor, setSelectedColor})}>
           <Text style={{color: 'white', fontSize: 20, fontWeight: '700'}}>CHỌN MUA</Text>
         </Pressable>
       </View>
@@ -47,24 +54,56 @@ function DetailProductScreen() {
   );
 }
 
-function SelectColorScreen(){
+function SelectColorScreen({route}){
+  const { selectedColor: initialColor, setSelectedColor } = route.params;
+  const [selectedColor, setLocalSelectedColor] = useState(initialColor);
+  const [colorSelected, setColorSelected] = useState(false);
+  const navigation = useNavigation();
+  const images = {
+    '#C5F1FB': 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/aee6d16882f7e9e9e4154103c6678314',
+    '#F30D0D': 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/00d431560e7cf43d4f0810a3d194786c',
+    '#000000': 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/e1d44ffa1b1d1fb2f5008c63d6144f89',
+    '#234896': 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/b93ad14ed7da498788208432e391d4f0',
+  };
+  const handleColorSelect = (color) => {
+    setLocalSelectedColor(color);
+    setSelectedColor(color);
+    setColorSelected(true);
+  };
   return (
     <View style={styles.background}>
       <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'flex-start', margin: 10}}>
-        <Image source={{uri: 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/b93ad14ed7da498788208432e391d4f0'}} style={{width: 100, height: 125, marginRight: 10}}/>
-        <Text style={styles.textNormal}>Điện Thoại Vsmart Joy 3 Hàng chính hãng</Text>
+        <Image source={{uri: images[selectedColor]}} style={{width: 100, height: 125, marginRight: 10}}/>
+        <View style={{justifyContent:'space-between'}}>
+          <Text style={styles.textNormal}>Điện Thoại Vsmart Joy 3 Hàng chính hãng</Text>
+          {colorSelected && (
+            <>
+              <Text style={styles.textNormal}>Màu: <View style={{ width: 50, height: 20, backgroundColor: selectedColor, marginTop: 5 }}></View></Text>
+              <Text style={styles.textNormal}>Cung cấp bởi: <Text style={styles.priceText}>TikiTrading</Text></Text>
+              <Text style={styles.priceText}>1.790.000 đ</Text>
+            </>
+          )}
+        </View>
       </View>
       <View style={{flex: 6, width:'100%',display: 'flex',flexDirection: 'column', alignItems: 'center', backgroundColor: 'rgba(196, 196, 196, 1)'}}>
         <View style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
           <View style={{width: '100%', justifyContent: 'flex-start', margin: 10, paddingLeft: 10}}><Text style={{fontSize: 18}}>Chọn một màu bên dưới:</Text></View>
           <View style={styles.selectColor}>
-            <View style={{width: 85, height: 80, backgroundColor: '#C5F1FB'}}></View>
-            <View style={{width: 85, height: 80, backgroundColor: '#F30D0D'}}></View>
-            <View style={{width: 85, height: 80, backgroundColor: '#000000'}}></View>
-            <View style={{width: 85, height: 80, backgroundColor: '#234896'}}></View>
+            <Pressable onPress={() => handleColorSelect('#C5F1FB')}>
+              <View style={{ width: 85, height: 80, backgroundColor: '#C5F1FB' }}></View>
+            </Pressable>
+            <Pressable onPress={() => handleColorSelect('#F30D0D')}>
+              <View style={{ width: 85, height: 80, backgroundColor: '#F30D0D' }}></View>
+            </Pressable>
+            <Pressable onPress={() => handleColorSelect('#000000')}>
+              <View style={{ width: 85, height: 80, backgroundColor: '#000000' }}></View>
+            </Pressable>
+            <Pressable onPress={() => handleColorSelect('#234896')}>
+              <View style={{ width: 85, height: 80, backgroundColor: '#234896' }}></View>
+            </Pressable>
           </View>
           <View>
-            <Pressable style={styles.doneBtn}>
+            <Pressable style={styles.doneBtn} onPress={() => navigation.navigate('DetailProduct')}>
               <Text style={{color: 'white', fontSize: 20, fontWeight: '700'}}>Xong</Text>
             </Pressable>
           </View>
@@ -79,8 +118,8 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator>
-        {/* <Stack.Screen name="DetailProduct" component={DetailProductScreen} />*/}
+      <Stack.Navigator initialRouteName="DetailProduct">
+        <Stack.Screen name="DetailProduct" component={DetailProductScreen} />
         <Stack.Screen name="SelectColor" component={SelectColorScreen} />
       </Stack.Navigator>
     </NavigationContainer>
