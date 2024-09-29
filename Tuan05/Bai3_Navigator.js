@@ -110,14 +110,15 @@ function HomeScreen(){
   );
 }
 const Item = ({ item }) => {
-  const [isPressed, setIsPressed] = useState(false); // Move useState here
-
+  const [isHovered, setIsHovered] = useState(false); // Move useState here
+  const navigation = useNavigation();
   return (
     <View style={styles.backgroundItem}>
       <Pressable
-        style={[styles.backgroundItem, isPressed && styles.shadow]}
-        onPressIn={() => setIsPressed(true)}
-        onPressOut={() => setIsPressed(false)}
+        style={[styles.backgroundItem, isHovered && styles.shadow]}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}
+        onPress={() => navigation.navigate('DetailProduct', { item })}
       >
         <View>
           <FontAwesome name="heart-o" size={24} color="gray" style={{ top: 10, left: -5 }} />
@@ -163,13 +164,47 @@ function ListProductScreen(){
     </View>
   );
 }
+function DetailProductScreen({route}){
+  const {item} = route.params;
+  const navigation = useNavigation();
+  return (
+    <View style={styles.container}>
+      <View style={styles.backgroundImage}>
+        <Image source={item.img} style={styles.imageProduct}/>
+      </View>
+      <View style={{width: '95%', alignItems: 'flex-start'}}>
+          <Text style={{fontSize: 35, fontFamily: 'Voltaire', fontWeight: '400'}}>{item.name}</Text>
+      </View>
+      <View style={{width: '95%', alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-between', marginTop: 20}}>
+          <Text style={{fontSize: 25, fontFamily: 'Voltaire', fontWeight: '400', color: 'rgba(0, 0, 0, 0.59)'}}>{item.discount}% OFF|{item.price*(100-item.discount)/100}$</Text>
+          <Text style={{fontSize: 35,  width: '50%',
+          fontFamily: 'Voltaire', fontWeight: '400', 
+          color: 'rgba(0, 0, 0, 1)', 
+          textDecorationLine: 'line-through'}}>{item.price}</Text>
+      </View>
+      <View style={{width: '95%', alignItems: 'flex-start'}}>
+          <Text style={{fontSize: 25, fontFamily: 'Voltaire', fontWeight: '400', marginBottom: 20}}>Description</Text>
+      </View>
+      <View style={{width: '95%', alignItems: 'flex-start'}}>
+          <Text style={{fontSize: 22, fontFamily: 'Voltaire', fontWeight: '400', color: 'rgba(0, 0, 0, 0.57)'}}>{item.desc}</Text>
+      </View>
+      <View position='relative' style={{flexDirection: 'row', marginTop: 50}}>
+        <FontAwesome name="heart-o" size={35} color="gray" style={{ top: 10, left: -10}} />
+        <Pressable style={{width: 269, height: 54, backgroundColor: 'rgba(233, 65, 65, 1)', borderRadius: 30, justifyContent: 'center', alignItems: 'center'}}
+        onPress={()=> navigation.navigate('Home')}>
+          <Text style={{fontFamily: 'Voltaire', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351}}>Add to card</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName="ListProduct">
+      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen 
           name="Home" 
           component={HomeScreen} 
@@ -178,6 +213,11 @@ export default function App() {
         <Stack.Screen
           name="ListProduct"
           component={ListProductScreen} 
+          options={{ headerShown: false }} // Ẩn tên màn hình
+        />
+          <Stack.Screen
+          name="DetailProduct"
+          component={DetailProductScreen} 
           options={{ headerShown: false }} // Ẩn tên màn hình
         />
       </Stack.Navigator>
