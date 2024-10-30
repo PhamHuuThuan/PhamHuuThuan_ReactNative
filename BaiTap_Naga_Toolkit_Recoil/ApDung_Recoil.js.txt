@@ -1,0 +1,179 @@
+import React, { useEffect, useState } from 'react';
+import { Text, SafeAreaView, StyleSheet, Image, View, TextInput, Pressable, FlatList } from 'react-native';
+import { RecoilRoot, atom, selector, useRecoilState, useRecoilValue } from 'recoil';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+// Atom lưu trữ danh sách công việc
+const workListState = atom({
+  key: 'workListState',
+  default: [],
+});
+
+// Atom lưu trạng thái lọc
+const filterStatusState = atom({
+  key: 'filterStatusState',
+  default: 'all', // Lọc mặc định là 'all', tức hiển thị tất cả công việc
+});
+
+// Selector để lọc danh sách công việc theo trạng thái
+const filteredWorkList = selector({
+  key: 'filteredWorkList',
+  get: ({ get }) => {
+    const workList = get(workListState);
+    const filter = get(filterStatusState);
+
+    if (filter === 'all') return workList;
+    return workList.filter((item) => item.status === filter);
+  },
+});
+
+const Screen02 = () => {
+  const name = "Huu Thuan";
+  const [searchText, setSearchText] = useState("");
+  const [workList, setWorkList] = useRecoilState(workListState);
+  const [filter, setFilter] = useRecoilState(filterStatusState);
+  const filteredList = useRecoilValue(filteredWorkList);
+
+  // Gọi API để tải dữ liệu
+  useEffect(() => {
+    fetch('https://api.mockfly.dev/mocks/dc3b614f-8950-4616-8e47-5c81a3e46d64/ToDoList2')
+      .then((res) => res.json())
+      .then((data) => setWorkList(data)) // Không cần random, dữ liệu có sẵn trạng thái
+      .catch((err) => console.error(err));
+  }, []);
+
+  // Lọc danh sách dựa vào từ khóa tìm kiếm
+  const filteredSearchList = filteredList.filter(item =>
+    item.workname.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const Item = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <Text>{item.id}</Text>
+      <Image source={{ uri: 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/c38d74598c0b3e67b3ab2e7d5b55e5a5' }} style={{ width: 24, height: 24 }} />
+      <Text style={{ width: '80%', fontWeight: 'bold', fontSize: 17 }}>{item.workname}</Text>
+      <Text style={{color: item.status==="new"?'green':'blue'}}>{item.status}</Text>
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Greeting */}
+      <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between', marginTop: 20 }}>
+        <Pressable onPress={() => navigation.navigate('Screen01')}>
+          <Image source={{ uri: 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/cfb5b067658032fd1870f734369d041b' }} style={{ width: 36, height: 36 }} />
+        </Pressable>
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={{ uri: 'https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/1e56b0d9da173efc560ae741f025d2f1' }} style={{ width: 50, height: 50 }} />
+          <View style={{ justifyContent: 'center', marginLeft: 20 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Hi {name}</Text>
+            <Text style={{ fontWeight: 'bold', color: 'gray' }}>Have a great day a head</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Search Box */}
+      <View style={styles.searchBox}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
+
+      {/* Filter Buttons */}
+      <View style={styles.filterContainer}>
+        <Pressable style={[styles.filterButton, filter === 'new' && styles.activeButton]} onPress={() => setFilter('new')}>
+          <Text style={styles.filterText}>New</Text>
+        </Pressable>
+        <Pressable style={[styles.filterButton, filter === 'inprocess' && styles.activeButton]} onPress={() => setFilter('inprocess')}>
+          <Text style={styles.filterText}>In Process</Text>
+        </Pressable>
+        <Pressable style={[styles.filterButton, filter === 'all' && styles.activeButton]} onPress={() => setFilter('all')}>
+          <Text style={styles.filterText}>All</Text>
+        </Pressable>
+      </View>
+
+      {/* Work List */}
+      <FlatList
+        data={filteredSearchList}
+        renderItem={({ item }) => <Item item={item} />}
+        numColumns={1}
+        style={{ width: 400 }}
+      />
+    </SafeAreaView>
+  );
+};
+
+// App Component with RecoilRoot and Navigation
+const Stack = createNativeStackNavigator();
+const App = () => (
+  <RecoilRoot>
+    <NavigationContainer independent={true}>
+      <Stack.Navigator initialRouteName="Screen02">
+        <Stack.Screen name="Screen02" component={Screen02} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  </RecoilRoot>
+);
+
+export default App;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingLeft: 20,
+  },
+  itemContainer: {
+    width: '90%',
+    height: 50,
+    backgroundColor: 'lightgray',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 30,
+    marginBottom: 20,
+  },
+  searchBox: {
+    width: '90%',
+    height: 50,
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingLeft: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  searchInput: {
+    width: '90%',
+    height: 50,
+    fontSize: 20,
+    marginLeft: 10,
+    paddingLeft: 10,
+    color: 'gray',
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '90%',
+    marginBottom: 20,
+  },
+  filterButton: {
+    backgroundColor: 'lightgray',
+    padding: 10,
+    borderRadius: 5,
+  },
+  activeButton: {
+    backgroundColor: 'blue',
+  },
+  filterText: {
+    color: '#fff',
+  },
+});
