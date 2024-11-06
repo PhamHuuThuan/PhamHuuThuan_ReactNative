@@ -1,0 +1,458 @@
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, Pressable, FlatList, TextInput} from 'react-native';
+import { NavigationContainer, useNavigation} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useDispatch, useSelector } from 'react-redux';
+import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { FontAwesome } from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import AppLoading from 'expo-app-loading';
+
+function HomeScreen(){
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  const loadFonts = async () => {
+    await Font.loadAsync({
+      'VT323': require('./assets/VT323-Regular.ttf'), // Adjust the path if necessary
+      'Voltaire': require('./assets/Voltaire-Regular.ttf'),
+    });
+    setFontsLoaded(true);
+  };
+
+  useEffect(() => {
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+  const navigation = useNavigation();
+  return (
+    <View style={styles.container}>
+      <View>
+        <Text style={{fontFamily: 'VT323', fontSize: 26, fontWeight: '400', textAlign: 'center', width: 351, marginTop: 50}}>A premium online store for sporter and their stylish choice</Text>
+      </View>
+      <View style={styles.backgroundImage}>
+        <Image source={{uri: 'https://s3-alpha-sig.figma.com/img/b657/871f/5c0d8c0f67fc78f523516fd7768fec28?Expires=1731888000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lF5Gn8hEujcOtdsOXxMA7b5AMTsxXVS6iLGImXqx0jqYTUl3RifpEJ1AwcQGANUVu4aC6Eq8SXgPXNiKkErJ9ft6iTqrFLdWEGTtbG38azVAswCRRG7DJLvWIrFaO0A-PCbDsnqM0REdeSaFBsm9dZY1LMTMeuWSD5HJxarXinZ8iya4FAVrjd3QCft2Pd4SMsoesz1B8NnL7LGWP-z4TYJ14-xW7BEYEVpfJmGYJ2auuW7fodRnWGDaM-Ywrrl0lwDUHsJKgTuuteLQljeKew4vrPxn3QcL~J5s5AGypOZPnFjxcefDzz6A0Nb-sIT0V9NUuAizCfCbOJ8Cm4KIag__'}} style={styles.imageProduct}/>
+      </View>
+      <View>
+        <Text style={{fontFamily: 'Ubutu', fontSize: 26, fontWeight: '700', textAlign: 'center', width: 351}}>POWER BIKE {'\n'} SHOP</Text>
+      </View>
+      <Pressable style={styles.btnStart} onPress={()=> navigation.navigate('ListProduct')}>
+        <Text style={{fontFamily: 'VT323', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351}}>Get started</Text>
+      </Pressable>
+    </View>
+  );
+}
+// --- Redux Setup ---
+
+// Initial state for products
+const initialProductsState = {
+  products: [],
+  status: 'idle',  // Can be 'idle', 'loading', 'succeeded', or 'failed'
+  error: null,
+};
+
+// Async thunk to fetch products from the mock API
+export const fetchProducts = createAsyncThunk(
+  'products/fetchProducts',
+  async () => {
+    const response = await fetch('https://672ad685976a834dd0248dd2.mockapi.io/Bikes');
+    const data = await response.json();
+    return data;
+  }
+);
+
+// Products slice to handle state for products
+const productsSlice = createSlice({
+  name: 'products',
+  initialState: initialProductsState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchProducts.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchProducts.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.products = action.payload;
+      })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+  },
+});
+
+// Initial state for selected category
+const initialCategoryState = 'All'; // Default is "All"
+
+// Slice to handle selected category state
+const categorySlice = createSlice({
+  name: 'category',
+  initialState: initialCategoryState,
+  reducers: {
+    setCategory: (state, action) => action.payload,
+  },
+});
+
+export const { setCategory } = categorySlice.actions;
+
+// Configure store
+const store = configureStore({
+  reducer: {
+    products: productsSlice.reducer,
+    category: categorySlice.reducer,
+  },
+});
+
+// --- Redux Setup End ---
+
+// Item component for rendering each product
+const Item = ({ item }) => {
+  const [isHovered, setIsHovered] = useState(false); 
+  const navigation = useNavigation();
+  
+  return (
+    <View style={styles.backgroundItem}>
+      <Pressable
+        style={[styles.backgroundItem, isHovered && styles.shadow]}
+        onPress={() => navigation.navigate('DetailProduct', { item })}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}
+      >
+        <View>
+          <FontAwesome name="heart-o" size={24} color="gray" style={{ top: 10, left: -5 }} />
+          <Image source={{ uri: item.img }} style={styles.imgProduct} />
+        </View>
+        <Text style={styles.nameProduct}>{item.name}</Text>
+        <Text style={styles.nameProduct}>
+          <Text style={{ color: 'rgba(247, 186, 131, 1)' }}>$</Text> {item.price}
+        </Text>
+      </Pressable>
+    </View>
+  );
+};
+
+// ListProductScreen Component
+const ListProductScreen = ({navigation}) => {
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.products.products);
+  const status = useSelector((state) => state.products.status);
+  const selectedCategory = useSelector((state) => state.category);
+
+  const [filteredProducts, setFilteredProducts] = useState(products);
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, status]);
+
+  useEffect(() => {
+    // Filter products based on selected category
+    if (selectedCategory === 'All') {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(products.filter((product) => product.type === selectedCategory));
+    }
+  }, [products, selectedCategory]);
+
+  return (
+    <View style={styles.container}>
+      <View style={{ paddingTop: 40 }}>
+        <Text style={{ color: 'rgba(233, 65, 65, 1)', fontSize: 25, fontWeight: '700' }}>
+          The world’s Best Bike
+        </Text>
+      </View>
+
+      <View style={styles.filterArea}>
+        <Pressable style={styles.filterBtn} onPress={() => dispatch(setCategory('All'))}>
+          <Text style={{ color: selectedCategory === 'All' ? 'red' : 'gray', fontSize: 20 }}>All</Text>
+        </Pressable>
+        <Pressable style={styles.filterBtn} onPress={() => dispatch(setCategory('Roadbike'))}>
+          <Text style={{ color: selectedCategory === 'Roadbike' ? 'red' : 'gray', fontSize: 20 }}>
+            Road Bike
+          </Text>
+        </Pressable>
+        <Pressable style={styles.filterBtn} onPress={() => dispatch(setCategory('Mountain'))}>
+          <Text style={{ color: selectedCategory === 'Mountain' ? 'red' : 'gray', fontSize: 20 }}>
+            Mountain
+          </Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.listProduct}>
+        {status === 'loading' ? (
+          <Text>Loading...</Text>
+        ) : status === 'failed' ? (
+          <Text>Failed to load products.</Text>
+        ) : (
+          <FlatList
+            data={filteredProducts}
+            renderItem={({ item }) => <Item item={item} />}
+            numColumns={2}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </View>
+            <Pressable style={styles.btnStart} onPress={() => navigation.navigate('AddBike')}>
+        <Text style={{ fontFamily: 'VT323', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351 }}>Admin Screen</Text>
+      </Pressable>
+    </View>
+  );
+};
+function DetailProductScreen({route}){
+  const {item} = route.params;
+  const navigation = useNavigation();
+  return (
+    <View style={styles.container}>
+      <View style={styles.backgroundImage}>
+        <Image source={item.img} style={styles.imageProduct}/>
+      </View>
+      <View style={{width: '95%', alignItems: 'flex-start'}}>
+          <Text style={{fontSize: 35, fontFamily: 'Voltaire', fontWeight: '400'}}>{item.name}</Text>
+      </View>
+      <View style={{width: '95%', alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-between', marginTop: 20}}>
+          <Text style={{fontSize: 25, fontFamily: 'Voltaire', fontWeight: '400', color: 'rgba(0, 0, 0, 0.59)'}}>{item.discount}% OFF|{item.price*(100-item.discount)/100}$</Text>
+          <Text style={{fontSize: 35,  width: '50%',
+          fontFamily: 'Voltaire', fontWeight: '400', 
+          color: 'rgba(0, 0, 0, 1)', 
+          textDecorationLine: 'line-through'}}>{item.price}</Text>
+      </View>
+      <View style={{width: '95%', alignItems: 'flex-start'}}>
+          <Text style={{fontSize: 25, fontFamily: 'Voltaire', fontWeight: '400', marginBottom: 20}}>Description</Text>
+      </View>
+      <View style={{width: '95%', alignItems: 'flex-start'}}>
+          <Text style={{fontSize: 22, fontFamily: 'Voltaire', fontWeight: '400', color: 'rgba(0, 0, 0, 0.57)'}}>{item.desc}</Text>
+      </View>
+      <View position='relative' style={{flexDirection: 'row', marginTop: 50}}>
+        <FontAwesome name="heart-o" size={35} color="gray" style={{ top: 10, left: -10}} />
+        <Pressable style={{width: 269, height: 54, backgroundColor: 'rgba(233, 65, 65, 1)', borderRadius: 30, justifyContent: 'center', alignItems: 'center'}}
+        onPress={()=> navigation.navigate('Home')}>
+          <Text style={{fontFamily: 'Voltaire', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351}}>Add to card</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+function AddBikeScreen({ navigation }) {
+  // State for the input fields
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [type, setType] = useState('');
+  const [img, setImg] = useState('');
+  const [discount, setDiscount] = useState('');
+  const [desc, setDesc] = useState('');
+
+  // Handle form submission
+  const handleAddProduct = async () => {
+    // Check if all fields are filled
+    if (!name || !price || !type || !img || !discount || !desc) {
+      Alert.alert('Error', 'All fields are required!');
+      return;
+    }
+
+    // Create a product object
+    const newProduct = {
+      name,
+      price: parseFloat(price),
+      type,
+      img,
+      discount: parseFloat(discount),
+      desc,
+    };
+
+    try {
+      // Make POST request to the API
+      const response = await fetch('https://672ad685976a834dd0248dd2.mockapi.io/Bikes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProduct),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add product');
+      }
+
+      // If the request is successful, navigate back
+      Alert.alert('Success', 'Product added successfully!');
+      navigation.pop();
+    } catch (error) {
+      // If there was an error during the request
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Add New Product</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Product Name"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Price"
+        keyboardType="numeric"
+        value={price}
+        onChangeText={setPrice}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Type (e.g., Roadbike, Mountain)"
+        value={type}
+        onChangeText={setType}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Image URL"
+        value={img}
+        onChangeText={setImg}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Discount (%)"
+        keyboardType="numeric"
+        value={discount}
+        onChangeText={setDiscount}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        value={desc}
+        onChangeText={setDesc}
+      />
+
+      <Pressable style={styles.button} onPress={handleAddProduct}>
+        <Text style={styles.buttonText}>Add Product</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  return (
+    <Provider store={store}>  {/* Wrap your entire app with the Provider */}
+      <NavigationContainer independent={true}>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AddBike" component={AddBikeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ListProduct" component={ListProductScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="DetailProduct" component={DetailProductScreen} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 8,
+    justifyContent: 'flex-start',
+    textAlign: 'center',
+    alignItems: 'center',
+  },
+  imageProduct:{
+    width: 292,
+    height: 270
+  },
+  backgroundImage:{
+    backgroundColor: 'rgba(233, 65, 65, 0.1)',
+    width: 359,
+    height: 359,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginTop: 10
+  },
+  btnStart:{
+    backgroundColor: 'rgba(233, 65, 65, 1)',
+    width: 340,
+    height: 61,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 50,
+    marginBottom: 30
+  },
+  filterArea:{
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 30,
+    paddingBottom: 15
+  },
+  filterBtn:{
+    width: 99,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(233, 65, 65, 0.53)',
+    borderRadius: 5,
+    margin: 5
+  },
+  imgProduct:{
+    width: 135,
+    height: 127
+  },
+  listProduct:{
+    flex: 1
+  },
+  backgroundItem:{
+    position: 'relative',
+    backgroundColor: 'rgba(247, 186, 131, 0.15)',
+    width: 167,
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    margin: 10
+  },
+  nameProduct:{
+    fontSize: 20,
+    fontFamily: 'Voltaire',
+    color: 'rgba(0, 0, 0, 0.6)'
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  input: {
+    width: '90%',
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 15,
+    paddingLeft: 10,
+  },
+  button: {
+    width: '90%',
+    backgroundColor: 'rgba(233, 65, 65, 1)',
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+  },
+});
