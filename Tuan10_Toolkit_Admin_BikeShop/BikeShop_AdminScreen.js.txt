@@ -42,9 +42,6 @@ function HomeScreen(){
       <Pressable style={styles.btnStart} onPress={()=> navigation.navigate('ListProduct')}>
         <Text style={{fontFamily: 'VT323', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351}}>Get started</Text>
       </Pressable>
-      <Pressable style={styles.btnStart} onPress={() => navigation.navigate('AddBike')}>
-        <Text style={{ fontFamily: 'VT323', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351 }}>Admin Screen</Text>
-      </Pressable>
     </View>
   );
 }
@@ -139,7 +136,7 @@ const Item = ({ item }) => {
 };
 
 // ListProductScreen Component
-const ListProductScreen = () => {
+const ListProductScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products.products);
   const status = useSelector((state) => state.products.status);
@@ -201,6 +198,9 @@ const ListProductScreen = () => {
           />
         )}
       </View>
+            <Pressable style={styles.btnStart} onPress={() => navigation.navigate('AddBike')}>
+        <Text style={{ fontFamily: 'VT323', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351 }}>Admin Screen</Text>
+      </Pressable>
     </View>
   );
 };
@@ -240,8 +240,6 @@ function DetailProductScreen({route}){
 }
 
 function AddBikeScreen({ navigation }) {
-  const dispatch = useDispatch();
-
   // State for the input fields
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -251,13 +249,14 @@ function AddBikeScreen({ navigation }) {
   const [desc, setDesc] = useState('');
 
   // Handle form submission
-  const handleAddProduct = () => {
+  const handleAddProduct = async () => {
+    // Check if all fields are filled
     if (!name || !price || !type || !img || !discount || !desc) {
       Alert.alert('Error', 'All fields are required!');
       return;
     }
 
-    // Create the new product object
+    // Create a product object
     const newProduct = {
       name,
       price: parseFloat(price),
@@ -267,20 +266,36 @@ function AddBikeScreen({ navigation }) {
       desc,
     };
 
-    // Dispatch the action to add the product
-    dispatch(addProduct(newProduct));
-    
-    // Navigate back to the product list screen after adding
-    navigation.goBack();
+    try {
+      // Make POST request to the API
+      const response = await fetch('https://672ad685976a834dd0248dd2.mockapi.io/Bikes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProduct),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add product');
+      }
+
+      // If the request is successful, navigate back
+      Alert.alert('Success', 'Product added successfully!');
+      navigation.navigate('ListProduct');
+    } catch (error) {
+      // If there was an error during the request
+      Alert.alert('Error', error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Add New Bike</Text>
+      <Text style={styles.header}>Add New Product</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Bike Name"
+        placeholder="Product Name"
         value={name}
         onChangeText={setName}
       />
@@ -317,8 +332,11 @@ function AddBikeScreen({ navigation }) {
         onChangeText={setDesc}
       />
 
-      <Pressable style={styles.button} onPress={handleAddProduct}>
-        <Text style={styles.buttonText}>Add Bike</Text>
+      <Pressable style={styles.btnStart} onPress={handleAddProduct}>
+        <Text style={{fontFamily: 'VT323', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351}}>Add Product</Text>
+      </Pressable>
+      <Pressable style={[styles.btnStart, {backgroundColor: 'blue'}]} onPress={()=> navigation.navigate('ListProduct')}>
+        <Text style={{fontFamily: 'VT323', fontSize: 26, fontWeight: '400', textAlign: 'center', color: 'white', width: 351}}>Product List</Text>
       </Pressable>
     </View>
   );
